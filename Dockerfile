@@ -11,7 +11,7 @@ RUN apk add --no-cache python3 && \
 RUN pip3 install flask
 RUN pip3 install flask_restful
 RUN mkdir -p /opt/python
-COPY app.py /opt/python
+COPY docker-conf/app.py /opt/python
 ENV FLASK_APP=app.py
 EXPOSE 5000
 
