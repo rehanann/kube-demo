@@ -1,0 +1,52 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: pyflask-deployment
+spec:
+  replicas: 2
+  template: 
+    metadata:
+      labels:
+        app: pyflask
+    spec:
+      containers:
+      - name: pydemo
+        image: rehanann/pydemo:latest
+        # volumeMounts:
+        # - mountPath: /myvol
+        #   name: myvolume
+        ports:
+        - name: pyflask
+          containerPort: 5000
+        livenessProbe:
+          httpGet:
+            path: /
+            port: pyflask
+          initialDelaySeconds: 15
+          timeoutSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: pyflask
+          initialDelaySeconds: 15
+          timeoutSeconds: 30
+      nodeSelector:
+          name: qa
+      #volumes:
+      #- name: myvolume
+      #  awsElasticBlockStore:
+      #    volumeID: vol-06b7394e7acacdff5
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pyflask-service
+spec:
+  ports:
+  - port: 80
+    targetPort: pyflask-port
+    protocol: TCP
+  selector:
+    app: pyflask
+  type: LoadBalancer

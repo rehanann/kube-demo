@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: pyflask-deployment-2
+spec:
+  strategy:
+    type: RollingUpdate
+  revisionHistoryLimit: 100
+  replicas: 2
+  minReadySeconds: 10  
+  template: 
+    metadata:
+      labels:
+        app: pyflask
+    spec:
+      containers:
+      - name: pydemo
+        image: rehanann/pydemo:v2
+        # volumeMounts:
+        # - mountPath: /myvol
+        #   name: myvolume
+        ports:
+        - name: pyflask
+          containerPort: 5000
+        livenessProbe:
+          httpGet:
+            path: /
+            port: pyflask
+          initialDelaySeconds: 15
+          timeoutSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: pyflask
+          initialDelaySeconds: 15
+          timeoutSeconds: 30
+      nodeSelector:
+          name: qa
+      #volumes:
+      #- name: myvolume
+      #  awsElasticBlockStore:
+      #    volumeID: vol-06b7394e7acacdff5
